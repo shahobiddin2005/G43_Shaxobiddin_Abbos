@@ -1,0 +1,25 @@
+-- create table users(
+--     id varchar primary key,
+--     name varchar not null ,
+--     state varchar
+-- );
+
+-- create table card(
+--     id serial primary key,
+--     number varchar not null unique ,
+--     password varchar not null,
+--     balance numeric not null,
+--     user_id varchar not null ,
+--     foreign key (user_id) references users(id)
+-- )
+
+-- create table monitoring
+-- (
+--     id serial primary key,
+--     sender_id int not null ,
+--     from_id int not null ,
+--     time timestamp default current_timestamp,
+--     amount numeric not null ,
+--     foreign key (sender_id) references card(id),
+--     foreign key (from_id) references card(id)
+-- )
