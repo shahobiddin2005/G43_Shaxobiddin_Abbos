@@ -202,7 +202,8 @@ public class BotLogicServise {
                     StringBuilder sb = new StringBuilder();
                     if (monitoring.getSender_u().equals("1")&&monitoring.getFrom_u().equals(currentUser.getId())){
                         sb.append("Deposite: ")
-                                .append("\namount: +")
+                                .append(repository.getCardById(monitoring.getFromId()).get().getNumber())
+                                .append("**\namount: +")
                                 .append(monitoring.getAmount())
                                 .append("\ntime: ")
                                 .append(monitoring.getTime());
