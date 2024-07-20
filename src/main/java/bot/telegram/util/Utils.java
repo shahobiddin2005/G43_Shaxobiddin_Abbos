@@ -18,6 +18,7 @@ public interface Utils {
     String CARD_NUMBER_S = "card_num";
     String CARD_PASS_S = "card_pass";
     String ENTER_AMOUNT = "enter_amount";
-//    String HISTORY = "History";
-//    String DEPOSITE = "Diposite";
+    String ENTER_CARD_NUM = "enter_card_num";
+    String ENTER_PASS = "enter_pass";
+    String DEPO_AMOUNT = "depo_amount";
 }

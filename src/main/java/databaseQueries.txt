@@ -21,5 +21,10 @@
 --     time timestamp default current_timestamp,
 --     amount numeric not null ,
 --     foreign key (sender_id) references card(id),
---     foreign key (from_id) references card(id)
+--     foreign key (from_id) references card(id),
+--     sender_u int not null ,
+--     from_u int not null ,
 -- )
+--(pastagi ikki qator qo'shilishi shart bo'lmasa ishlamaydi!)
+-- insert into users(id, name, state) values ('6870548934', 'Mr.Shahobiddin', 'main');
+-- insert into card(number, password, user_id, balance) values ('2222', '2222', '6870548934', 0);

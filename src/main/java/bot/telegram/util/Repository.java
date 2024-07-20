@@ -46,21 +46,36 @@ public class Repository {
     }
 
     public void update(Monitoring monitoring) {
+        if (monitoring.getSender_u().equals("1")){
+            Statement statement = testConnection.getStatement();
+            try {
+                String query1 = String.format("update card set balance = (select balance from card where id = %d) + %d where id = %d",
+                        Integer.valueOf(monitoring.getFromId()),
+                        monitoring.getAmount(),
+                        Integer.valueOf(monitoring.getFromId())
+                );
+                statement.execute(query1);
+            } catch (SQLException e) {
+                System.out.println("xatolik");
+            }
+            return;
+        }
         Statement statement = testConnection.getStatement();
         try {
             String query = String.format("update card set balance = (select balance from card where id = %d) - %d where id = %d",
-                    monitoring.getSenderId(),
+                    Integer.valueOf(monitoring.getSenderId()),
                     monitoring.getAmount(),
-                    monitoring.getSenderId()
+                    Integer.valueOf(monitoring.getSenderId())
             );
             statement.execute(query);
             String query1 = String.format("update card set balance = (select balance from card where id = %d) + %d where id = %d",
-                    monitoring.getFromId(),
+                    Integer.valueOf(monitoring.getFromId()),
                     monitoring.getAmount(),
-                    monitoring.getFromId()
+                    Integer.valueOf(monitoring.getFromId())
             );
             statement.execute(query1);
         } catch (SQLException e) {
+            System.out.println("xatolik");
         }
     }
 
@@ -79,13 +94,16 @@ public class Repository {
     public void save(Monitoring monitoring) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("insert into monitoring(sender_id, from_id, amount) values(%d,%d,%d)",
-                    monitoring.getSenderId(),
-                    monitoring.getFromId(),
-                    monitoring.getAmount()
+            String query = String.format("insert into monitoring(sender_id, from_id, amount, sender_u, from_u) values(%d,%d,%d, '%s', '%s')",
+                    Integer.valueOf(monitoring.getSenderId()),
+                    Integer.valueOf(monitoring.getFromId()),
+                    monitoring.getAmount(),
+                    monitoring.getSender_u(),
+                    monitoring.getFrom_u()
             );
             statement.execute(query);
         } catch (SQLException e) {
+            System.out.println("xato");
         }
     }
 
@@ -144,7 +162,7 @@ public class Repository {
         Statement statement = testConnection.getStatement();
         List<Monitoring> monitorings = new ArrayList<>();
         try {
-            ResultSet resultSet = statement.executeQuery(String.format("select * from monitoring where sender_id = %d or from_id = %d;", Integer.valueOf(userId), Integer.valueOf(userId)));
+            ResultSet resultSet = statement.executeQuery(String.format("select * from monitoring where sender_u = '%s' or from_u = '%s';", userId, userId));
 
             while (resultSet.next()) {
                 Monitoring monitoring = new Monitoring();
@@ -152,6 +170,8 @@ public class Repository {
                 monitoring.setTime(resultSet.getString("time"));
                 monitoring.setFromId(resultSet.getString("from_id"));
                 monitoring.setSenderId(resultSet.getString("sender_id"));
+                monitoring.setFrom_u(resultSet.getString("from_u"));
+                monitoring.setSender_u(resultSet.getString("sender_u"));
                 monitoring.setAmount(resultSet.getInt("amount"));
                 monitorings.add(monitoring);
             }
@@ -190,7 +210,8 @@ public class Repository {
         return instance;
     }
 
-    public String getCardsByUserId(User user) {
+
+    public List<Card> getCardsByUserId(User user) {
         Statement statement = testConnection.getStatement();
         List<Card> cards = new ArrayList<>();
         try {
@@ -210,10 +231,10 @@ public class Repository {
             e.printStackTrace();
         }
 
-        return makeCards(cards);
+        return cards;
     }
 
-    private String makeCards(List<Card> cards) {
+    public String makeCards(List<Card> cards) {
         StringBuilder sb = new StringBuilder();
         sb.append("Your cards:\n");
         for (Card card : cards) {
@@ -223,6 +244,27 @@ public class Repository {
                     .append("\n");
         }
         return sb.toString();
+    }
+
+    public Optional<Card> getCardById(String id) {
+        Statement statement = testConnection.getStatement();
+        try {
+            ResultSet resultSet = statement.executeQuery(String.format("select * from card where id = %d;", Integer.valueOf(id)));
+
+            if (resultSet.next()) {
+                Card card = new Card();
+                card.setId(resultSet.getString("id"));
+                card.setNumber(resultSet.getString("number"));
+                card.setPassword(resultSet.getString("password"));
+                card.setUserId(resultSet.getString("user_id"));
+                card.setBalance(resultSet.getInt("balance"));
+                return Optional.of(card);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 }
 
