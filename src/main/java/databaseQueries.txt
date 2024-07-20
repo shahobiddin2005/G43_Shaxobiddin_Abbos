@@ -22,8 +22,8 @@
 --     amount numeric not null ,
 --     foreign key (sender_id) references card(id),
 --     foreign key (from_id) references card(id),
---     sender_u int not null ,
---     from_u int not null ,
+--     sender_u varchar not null ,
+--     from_u varchar not null ,
 -- )
 --(pastagi ikki qator qo'shilishi shart bo'lmasa ishlamaydi!)
 -- insert into users(id, name, state) values ('6870548934', 'Mr.Shahobiddin', 'main');
