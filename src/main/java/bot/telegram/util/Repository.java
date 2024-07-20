@@ -3,6 +3,7 @@ package bot.telegram.util;
 import bot.telegram.entity.Card;
 import bot.telegram.entity.Monitoring;
 import bot.telegram.entity.User;
+import org.apache.commons.lang3.text.StrBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ public class Repository {
                     user.getId(),
                     user.getName(),
                     user.getState()
-                    );
+            );
             statement.execute(query);
         } catch (SQLException e) {
         }
@@ -31,12 +32,12 @@ public class Repository {
     public void save(Card card) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("insert into card(number, password, balance, user_id) values('%s','%s','%d', '%s)",
+            String query = String.format("insert into card(number, password, balance, user_id) values('%s','%s',%d , '%s')",
                     card.getNumber(),
                     card.getPassword(),
                     card.getBalance(),
                     card.getUserId()
-                    );
+            );
             statement.execute(query);
             System.out.println("qoshildi");
         } catch (SQLException e) {
@@ -47,13 +48,13 @@ public class Repository {
     public void update(Monitoring monitoring) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("update card set balance = (select balance from card where id = '%d') - '%f' where id = '%d'",
+            String query = String.format("update card set balance = (select balance from card where id = %d) - %d where id = %d",
                     monitoring.getSenderId(),
                     monitoring.getAmount(),
                     monitoring.getSenderId()
             );
             statement.execute(query);
-            String query1 = String.format("update card set balance = (select balance from card where id = '%d') + '%f' where id = '%d'",
+            String query1 = String.format("update card set balance = (select balance from card where id = %d) + %d where id = %d",
                     monitoring.getFromId(),
                     monitoring.getAmount(),
                     monitoring.getFromId()
@@ -78,11 +79,11 @@ public class Repository {
     public void save(Monitoring monitoring) {
         Statement statement = testConnection.getStatement();
         try {
-            String query = String.format("insert into monitoring(sender_id, from_id, amount) values('%s','%s','%d')",
+            String query = String.format("insert into monitoring(sender_id, from_id, amount) values(%d,%d,%d)",
                     monitoring.getSenderId(),
                     monitoring.getFromId(),
                     monitoring.getAmount()
-                    );
+            );
             statement.execute(query);
         } catch (SQLException e) {
         }
@@ -143,7 +144,7 @@ public class Repository {
         Statement statement = testConnection.getStatement();
         List<Monitoring> monitorings = new ArrayList<>();
         try {
-            ResultSet resultSet = statement.executeQuery(String.format("select * from monitoring where sender_id = '%s' or from_id = '%s';", userId, userId));
+            ResultSet resultSet = statement.executeQuery(String.format("select * from monitoring where sender_id = %d or from_id = %d;", Integer.valueOf(userId), Integer.valueOf(userId)));
 
             while (resultSet.next()) {
                 Monitoring monitoring = new Monitoring();
@@ -191,7 +192,7 @@ public class Repository {
 
     public String getCardsByUserId(User user) {
         Statement statement = testConnection.getStatement();
-        List<Monitoring> monitorings = new ArrayList<>();
+        List<Card> cards = new ArrayList<>();
         try {
             ResultSet resultSet = statement.executeQuery(String.format("select * from card where user_id = '%s';", user.getId()));
 
@@ -202,11 +203,27 @@ public class Repository {
                 card.setPassword(resultSet.getString("password"));
                 card.setUserId(resultSet.getString("user_id"));
                 card.setBalance(resultSet.getInt("balance"));
+                cards.add(card);
             }
         } catch (SQLException e) {
+            System.out.println("xato");
             e.printStackTrace();
         }
 
-        return monitorings.toString();
+        return makeCards(cards);
+    }
+
+    private String makeCards(List<Card> cards) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your cards:\n");
+        for (Card card : cards) {
+            sb.append("Number: ").append(card.getNumber())
+                    .append("**, Balance: ")
+                    .append(card.getBalance())
+                    .append("\n");
+        }
+        return sb.toString();
     }
 }
+
+

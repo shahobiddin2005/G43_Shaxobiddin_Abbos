@@ -57,6 +57,7 @@ public class BotLogicServise {
             cards.get(currentUser.getId()).setPassword(text);
             sendMessage.setText("Karta qo'shildi(parol uchun uzur!):");
             sendMessage.setChatId(currentUser.getId());
+            sendMessage.setReplyMarkup(keyboardMurkup.keyboardMaker(mainMenu));
             currentUser.setState(MAIN_S);
             repository.update(currentUser.getId(), MAIN_S);
             System.out.println(cards.get(currentUser.getId()));
@@ -64,6 +65,8 @@ public class BotLogicServise {
             botService.executeMessage(sendMessage);
             return;
         }
+
+
 
         switch (text) {
             case "/start" -> {
@@ -88,13 +91,19 @@ public class BotLogicServise {
                 botService.executeMessage(sendMessage);
             }
             case HISTORY -> {
-
+                sendMessage.setText(repository.getCardsByUserId(currentUser));
+                sendMessage.setChatId(currentUser.getId());
+                sendMessage.setReplyMarkup(keyboardMurkup.keyboardMaker(mainMenu));
+                botService.executeMessage(sendMessage);
             }
             case TRANSFER -> {
-
+                
             }
             case DEPOSITE -> {
-
+                sendMessage.setText("Enter amount:");
+                sendMessage.setChatId(chatId);
+                currentUser.setState(ENTER_AMOUNT);
+                botService.executeMessage(sendMessage);
             }
         }
     }
