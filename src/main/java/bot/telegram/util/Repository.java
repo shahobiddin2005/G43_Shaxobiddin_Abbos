@@ -3,7 +3,6 @@ package bot.telegram.util;
 import bot.telegram.entity.Card;
 import bot.telegram.entity.Monitoring;
 import bot.telegram.entity.User;
-import org.apache.commons.lang3.text.StrBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +14,54 @@ import java.util.Optional;
 public class Repository {
     DbConnection testConnection = DbConnection.getInstance();
 
+    public void createTables(){
+        Statement statement = testConnection.getStatement();
+        try {
+            String query = String.format("drop table monitoring;");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("monitoring uchmadi");
+        }try {
+            String query = String.format("drop table card;");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("card uchmadi");
+        }try {
+            String query = String.format("drop table users;");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("user uchmadi");
+        }try {
+            String query = String.format("create table users(id varchar primary key,name varchar not null,state varchar);");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("user yaralmadi");
+        }
+        try {
+            String query = String.format("create table card(id serial primary key,number varchar not null unique ,password varchar not null,balance numeric not null,user_id varchar not null ,foreign key (user_id) references users(id));");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("card yaralmadi");
+        }
+        try {
+            String query = String.format("create table monitoring(id serial primary key,sender_id int not null ,from_id int not null ,time timestamp default current_timestamp,amount numeric not null ,foreign key (sender_id) references card(id),foreign key (from_id) references card(id),sender_u varchar not null ,from_u varchar not null );");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("monitoring yaralmadi");
+        }
+        try {
+            String query = String.format("insert into users(id, name, state) values ('6870548934', 'Mr.Shahobiddin', 'main');");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("muhim user qoshilmadi");
+        }
+        try {
+            String query = String.format("insert into card(number, password, user_id, balance) values ('2222', '2222', '6870548934', 0);");
+            statement.execute(query);
+        } catch (SQLException e) {
+            System.err.println("muhim card qoshilmadi");
+        }
+    }
 
     public void save(User user) {
         Statement statement = testConnection.getStatement();

@@ -1,30 +1,8 @@
--- create table users(
---     id varchar primary key,
---     name varchar not null ,
---     state varchar
--- );
+-- create table users(id varchar primary key,name varchar not null ,state varcha);
 
--- create table card(
---     id serial primary key,
---     number varchar not null unique ,
---     password varchar not null,
---     balance numeric not null,
---     user_id varchar not null ,
---     foreign key (user_id) references users(id)
--- )
+-- create table card(id serial primary key,number varchar not null unique ,password varchar not null,balance numeric not null,user_id varchar not null ,foreign key (user_id) references users(id));
 
--- create table monitoring
--- (
---     id serial primary key,
---     sender_id int not null ,
---     from_id int not null ,
---     time timestamp default current_timestamp,
---     amount numeric not null ,
---     foreign key (sender_id) references card(id),
---     foreign key (from_id) references card(id),
---     sender_u varchar not null ,
---     from_u varchar not null ,
--- )
+-- create table monitoring(id serial primary key,sender_id int not null ,from_id int not null ,time timestamp default current_timestamp,amount numeric not null ,foreign key (sender_id) references card(id),foreign key (from_id) references card(id),sender_u varchar not null ,from_u varchar not null )
 --(pastagi ikki qator qo'shilishi shart bo'lmasa ishlamaydi!)
 -- insert into users(id, name, state) values ('6870548934', 'Mr.Shahobiddin', 'main');
 -- insert into card(number, password, user_id, balance) values ('2222', '2222', '6870548934', 0);
